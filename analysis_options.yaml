@@ -1,0 +1,40 @@
+include: package:flutter_lints/flutter.yaml
+
+linter:
+  rules:
+    # ─── Style & Readability ───────────────────────────────────────────────────
+    prefer_const_constructors: true
+    prefer_const_declarations: true
+    prefer_const_literals_to_create_immutables: true
+    prefer_final_fields: true
+    use_super_parameters: true
+    avoid_unnecessary_containers: true
+    sized_box_for_whitespace: true
+
+    # ─── Architecture / Safety ────────────────────────────────────────────────
+    avoid_print: true           # Use AppLogger instead
+    avoid_dynamic_calls: false  # Allow when necessary for JSON parsing
+    always_declare_return_types: true
+    cancel_subscriptions: true
+    close_sinks: true
+    unawaited_futures: false    # Managed per-case
+
+    # ─── Flutter-Specific ─────────────────────────────────────────────────────
+    use_build_context_synchronously: true
+    avoid_web_libraries_in_flutter: true
+
+    # ─── Dart Quality ─────────────────────────────────────────────────────────
+    require_trailing_commas: false
+    prefer_single_quotes: true
+    sort_constructors_first: false
+
+analyzer:
+  exclude:
+    - "**/*.g.dart"       # Generated JSON serialization files
+    - "**/*.freezed.dart" # Generated freezed files
+  errors:
+    invalid_annotation_target: ignore
+  language:
+    strict-casts: false
+    strict-inference: false
+    strict-raw-types: false
