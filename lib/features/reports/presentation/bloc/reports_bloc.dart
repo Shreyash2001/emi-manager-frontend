@@ -7,6 +7,9 @@ import 'package:mobile_emi_manager/features/payments/data/models/payment_models.
 import 'package:mobile_emi_manager/features/payments/domain/repositories/payment_repository.dart';
 import 'package:mobile_emi_manager/features/reports/data/models/reports_models.dart';
 import 'package:mobile_emi_manager/features/reports/domain/repositories/reports_repository.dart';
+import 'package:mobile_emi_manager/core/constants/api_constants.dart';
+import 'package:mobile_emi_manager/core/di/injection_container.dart';
+import 'package:mobile_emi_manager/core/network/api_cache_manager.dart';
 
 // ─── Domain Entities ──────────────────────────────────────────────────────────
 
@@ -252,6 +255,9 @@ class ReportsBloc extends Bloc<ReportsEvent, ReportsState> {
     RefreshReports event,
     Emitter<ReportsState> emit,
   ) async {
+    AppLogger.bloc('ReportsBloc', 'RefreshReports');
+    sl<ApiCacheManager>().invalidate('/reports');
+    sl<ApiCacheManager>().invalidate(ApiEndpoints.payments);
     add(const LoadReportsSummary());
   }
 }

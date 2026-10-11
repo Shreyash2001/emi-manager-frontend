@@ -30,7 +30,10 @@ class _DashboardPageState extends State<DashboardPage> {
   @override
   void initState() {
     super.initState();
-    sl<DashboardBloc>().add(const LoadDashboard());
+    final bloc = sl<DashboardBloc>();
+    if (bloc.state is! DashboardLoaded && bloc.state is! DashboardLoading) {
+      bloc.add(const LoadDashboard());
+    }
   }
 
   @override
@@ -49,7 +52,9 @@ class _DashboardView extends StatelessWidget {
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
     return Scaffold(
-      backgroundColor: isDark ? AppColors.backgroundDark : const Color(0xFFF8FAFC),
+      backgroundColor: isDark
+          ? AppColors.backgroundDark
+          : const Color(0xFFF8FAFC),
       body: SafeArea(
         child: BlocBuilder<DashboardBloc, DashboardState>(
           builder: (context, state) {
@@ -127,8 +132,12 @@ class _DashboardContent extends StatelessWidget {
   /// Top bar with App Icon, Store Name, Location, Notification dot & Profile Avatar
   Widget _buildTopHeader(BuildContext context, DashboardSummary summary) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
-    final textPrimary = isDark ? AppColors.textPrimaryDark : AppColors.textPrimary;
-    final textSecondary = isDark ? AppColors.textSecondaryDark : AppColors.textSecondary;
+    final textPrimary = isDark
+        ? AppColors.textPrimaryDark
+        : AppColors.textPrimary;
+    final textSecondary = isDark
+        ? AppColors.textSecondaryDark
+        : AppColors.textSecondary;
 
     return Row(
       children: [
@@ -175,44 +184,11 @@ class _DashboardContent extends StatelessWidget {
           ),
         ),
 
-        // Notification Bell Icon with Red Dot
-        InkWell(
-          onTap: () {},
-          borderRadius: BorderRadius.circular(AppDimensions.radiusFull),
-          child: Padding(
-            padding: const EdgeInsets.all(AppDimensions.spaceXs),
-            child: Stack(
-              children: [
-                Icon(
-                  Icons.notifications_none_rounded,
-                  size: 26,
-                  color: textPrimary,
-                ),
-                Positioned(
-                  right: 2,
-                  top: 2,
-                  child: Container(
-                    width: 9,
-                    height: 9,
-                    decoration: BoxDecoration(
-                      color: AppColors.error,
-                      shape: BoxShape.circle,
-                      border: Border.all(
-                        color: isDark ? AppColors.backgroundDark : Colors.white,
-                        width: 1.5,
-                      ),
-                    ),
-                  ),
-                ),
-              ],
-            ),
-          ),
-        ),
         const SizedBox(width: AppDimensions.spaceSm),
 
         // Owner Profile Avatar
         GestureDetector(
-          onTap: () => context.go(RoutePaths.profile),
+          onTap: () => context.push(RoutePaths.profile),
           child: Container(
             width: 38,
             height: 38,
@@ -236,8 +212,12 @@ class _DashboardContent extends StatelessWidget {
   /// Greeting Section — wraps long owner names cleanly onto the next line
   Widget _buildGreetingSection(BuildContext context, String ownerName) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
-    final textPrimary = isDark ? AppColors.textPrimaryDark : AppColors.textPrimary;
-    final textSecondary = isDark ? AppColors.textSecondaryDark : AppColors.textSecondary;
+    final textPrimary = isDark
+        ? AppColors.textPrimaryDark
+        : AppColors.textPrimary;
+    final textSecondary = isDark
+        ? AppColors.textSecondaryDark
+        : AppColors.textSecondary;
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -275,9 +255,13 @@ class _DashboardContent extends StatelessWidget {
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final cardBg = isDark ? AppColors.cardDark : Colors.white;
     final cardBorder = isDark ? AppColors.borderDark : const Color(0xFFF1F5F9);
-    final labelColor = isDark ? AppColors.textSecondaryDark : const Color(0xFF4B5563);
+    final labelColor = isDark
+        ? AppColors.textSecondaryDark
+        : const Color(0xFF4B5563);
     final iconBg = isDark ? AppColors.surfaceDark : const Color(0xFFF1F5F9);
-    final iconColor = isDark ? AppColors.textPrimaryDark : const Color(0xFF4B5563);
+    final iconColor = isDark
+        ? AppColors.textPrimaryDark
+        : const Color(0xFF4B5563);
 
     return Row(
       children: [
@@ -303,7 +287,9 @@ class _DashboardContent extends StatelessWidget {
               child: Text(
                 '+${summary.newCustomersThisMonth} this mo',
                 style: TextStyle(
-                  color: isDark ? AppColors.primaryLight : const Color(0xFF6C5CE7),
+                  color: isDark
+                      ? AppColors.primaryLight
+                      : const Color(0xFF6C5CE7),
                   fontSize: 10.5,
                   fontWeight: FontWeight.w700,
                 ),
@@ -333,7 +319,9 @@ class _DashboardContent extends StatelessWidget {
             subtext: Text(
               _fmtCurrency(summary.activeLoanAmount),
               style: TextStyle(
-                color: isDark ? AppColors.textSecondaryDark : const Color(0xFF4B5563),
+                color: isDark
+                    ? AppColors.textSecondaryDark
+                    : const Color(0xFF4B5563),
                 fontSize: 11.5,
                 fontWeight: FontWeight.w600,
               ),
@@ -357,7 +345,9 @@ class _DashboardContent extends StatelessWidget {
     Widget? subtext,
   }) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
-    final textPrimary = isDark ? AppColors.textPrimaryDark : AppColors.textPrimary;
+    final textPrimary = isDark
+        ? AppColors.textPrimaryDark
+        : AppColors.textPrimary;
 
     return Container(
       padding: const EdgeInsets.all(AppDimensions.spaceMd),
@@ -428,8 +418,12 @@ class _DashboardContent extends StatelessWidget {
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final cardBg = isDark ? AppColors.cardDark : Colors.white;
     final cardBorder = isDark ? AppColors.borderDark : const Color(0xFFF1F5F9);
-    final labelColor = isDark ? AppColors.textSecondaryDark : const Color(0xFF4B5563);
-    final textPrimary = isDark ? AppColors.textPrimaryDark : AppColors.textPrimary;
+    final labelColor = isDark
+        ? AppColors.textSecondaryDark
+        : const Color(0xFF4B5563);
+    final textPrimary = isDark
+        ? AppColors.textPrimaryDark
+        : AppColors.textPrimary;
 
     return Container(
       width: double.infinity,
@@ -497,8 +491,12 @@ class _DashboardContent extends StatelessWidget {
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final cardBg = isDark ? AppColors.cardDark : Colors.white;
     final cardBorder = isDark ? AppColors.borderDark : const Color(0xFFF1F5F9);
-    final textPrimary = isDark ? AppColors.textPrimaryDark : AppColors.textPrimary;
-    final labelColor = isDark ? AppColors.textSecondaryDark : const Color(0xFF6B7280);
+    final textPrimary = isDark
+        ? AppColors.textPrimaryDark
+        : AppColors.textPrimary;
+    final labelColor = isDark
+        ? AppColors.textSecondaryDark
+        : const Color(0xFF6B7280);
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -540,7 +538,9 @@ class _DashboardContent extends StatelessWidget {
                   context: context,
                   icon: Icon(
                     Icons.person_add_alt_1_rounded,
-                    color: isDark ? AppColors.primaryLight : const Color(0xFF6C5CE7),
+                    color: isDark
+                        ? AppColors.primaryLight
+                        : const Color(0xFF6C5CE7),
                     size: 22,
                   ),
                   bgColor: isDark
@@ -563,7 +563,9 @@ class _DashboardContent extends StatelessWidget {
                   context: context,
                   icon: Icon(
                     Icons.phone_android_rounded,
-                    color: isDark ? const Color(0xFF38BDF8) : const Color(0xFF0284C7),
+                    color: isDark
+                        ? const Color(0xFF38BDF8)
+                        : const Color(0xFF0284C7),
                     size: 22,
                   ),
                   bgColor: isDark

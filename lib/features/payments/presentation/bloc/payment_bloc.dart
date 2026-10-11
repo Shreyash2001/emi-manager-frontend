@@ -5,6 +5,9 @@ import 'package:mobile_emi_manager/core/errors/error_mapper.dart';
 import 'package:mobile_emi_manager/core/utils/logger.dart';
 import 'package:mobile_emi_manager/features/payments/data/models/payment_models.dart';
 import 'package:mobile_emi_manager/features/payments/domain/repositories/payment_repository.dart';
+import 'package:mobile_emi_manager/core/constants/api_constants.dart';
+import 'package:mobile_emi_manager/core/di/injection_container.dart';
+import 'package:mobile_emi_manager/core/network/api_cache_manager.dart';
 
 // ─── Domain Entity ────────────────────────────────────────────────────────────
 
@@ -189,6 +192,7 @@ class PaymentBloc extends Bloc<PaymentEvent, PaymentState> {
     RefreshPayments event,
     Emitter<PaymentState> emit,
   ) async {
+    sl<ApiCacheManager>().invalidate(ApiEndpoints.payments);
     add(LoadPaymentHistory(
       emiPlanId: event.emiPlanId ?? _emiPlanId,
       customerId: event.customerId ?? _customerId,

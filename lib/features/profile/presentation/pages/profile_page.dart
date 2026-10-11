@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:go_router/go_router.dart';
+import 'package:mobile_emi_manager/app/router/route_paths.dart';
 import 'package:mobile_emi_manager/app/theme/app_colors.dart';
 import 'package:mobile_emi_manager/app/theme/app_dimensions.dart';
 import 'package:mobile_emi_manager/app/theme/app_text_styles.dart';
@@ -8,14 +10,41 @@ import 'package:mobile_emi_manager/features/auth/presentation/bloc/auth_bloc.dar
 import 'package:mobile_emi_manager/features/auth/presentation/bloc/auth_event.dart';
 import 'package:mobile_emi_manager/features/auth/presentation/bloc/auth_state.dart';
 
-/// Profile page placeholder.
+/// Profile page.
 class ProfilePage extends StatelessWidget {
   const ProfilePage({super.key});
 
   @override
   Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final textColor = isDark ? AppColors.textPrimaryDark : AppColors.textPrimary;
+
     return Scaffold(
-      appBar: AppBar(title: Text(context.l10n.profile)),
+      appBar: AppBar(
+        leading: IconButton(
+          icon: Icon(
+            Icons.arrow_back_ios_new_rounded,
+            size: 18,
+            color: textColor,
+          ),
+          tooltip: 'Back',
+          onPressed: () {
+            if (context.canPop()) {
+              context.pop();
+            } else {
+              context.go(RoutePaths.dashboard);
+            }
+          },
+        ),
+        title: Text(
+          context.l10n.profile,
+          style: AppTextStyles.headingMedium.copyWith(
+            fontWeight: FontWeight.w800,
+            fontSize: 18,
+            color: textColor,
+          ),
+        ),
+      ),
       body: BlocBuilder<AuthBloc, AuthState>(
         builder: (context, state) {
           final user = state is AuthAuthenticated ? state.user : null;

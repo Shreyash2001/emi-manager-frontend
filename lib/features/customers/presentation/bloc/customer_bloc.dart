@@ -5,6 +5,9 @@ import 'package:mobile_emi_manager/core/errors/error_mapper.dart';
 import 'package:mobile_emi_manager/core/utils/logger.dart';
 import 'package:mobile_emi_manager/features/customers/data/models/customer_models.dart';
 import 'package:mobile_emi_manager/features/customers/domain/repositories/customer_repository.dart';
+import 'package:mobile_emi_manager/core/constants/api_constants.dart';
+import 'package:mobile_emi_manager/core/di/injection_container.dart';
+import 'package:mobile_emi_manager/core/network/api_cache_manager.dart';
 
 // ─── Domain Entity ────────────────────────────────────────────────────────────
 
@@ -227,6 +230,7 @@ class CustomerBloc extends Bloc<CustomerEvent, CustomerState> {
     Emitter<CustomerState> emit,
   ) async {
     AppLogger.bloc('CustomerBloc', 'RefreshCustomers');
+    sl<ApiCacheManager>().invalidate(ApiEndpoints.customers);
     add(const LoadCustomers());
   }
 

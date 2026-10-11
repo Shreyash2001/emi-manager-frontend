@@ -3,6 +3,8 @@ import 'package:mobile_emi_manager/core/storage/secure_storage_service.dart';
 import 'package:mobile_emi_manager/core/constants/storage_keys.dart';
 import 'package:mobile_emi_manager/core/utils/logger.dart';
 
+import 'package:mobile_emi_manager/core/network/api_cache_manager.dart';
+
 /// Dio interceptor that automatically attaches the Bearer token to all
 /// protected requests and handles 401 Unauthorized responses.
 ///
@@ -10,12 +12,16 @@ import 'package:mobile_emi_manager/core/utils/logger.dart';
 /// The [onUnauthorized] callback is set by the app shell to clear AuthBloc state.
 class AuthInterceptor extends Interceptor {
   final SecureStorageService _secureStorage;
+  final ApiCacheManager? _cacheManager;
 
   /// Called when a 401 is received — use this to trigger AuthBloc logout.
   void Function()? onUnauthorized;
 
-  AuthInterceptor({required SecureStorageService secureStorage})
-      : _secureStorage = secureStorage;
+  AuthInterceptor({
+    required SecureStorageService secureStorage,
+    ApiCacheManager? cacheManager,
+  })  : _secureStorage = secureStorage,
+        _cacheManager = cacheManager;
 
   @override
   Future<void> onRequest(
@@ -49,5 +55,6 @@ class AuthInterceptor extends Interceptor {
 
   Future<void> _clearSession() async {
     await _secureStorage.delete(StorageKeys.accessToken);
+    _cacheManager?.clear();
   }
 }

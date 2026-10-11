@@ -17,9 +17,7 @@ import 'package:mobile_emi_manager/features/emi/presentation/pages/emi_details_p
 import 'package:mobile_emi_manager/features/emi/presentation/pages/add_emi_page.dart';
 import 'package:mobile_emi_manager/app/router/route_names.dart';
 import 'package:mobile_emi_manager/app/router/route_paths.dart';
-import 'package:mobile_emi_manager/core/di/injection_container.dart';
 import 'package:mobile_emi_manager/core/widgets/app_loader.dart';
-import 'package:mobile_emi_manager/features/dashboard/presentation/bloc/dashboard_bloc.dart';
 
 /// Central router configuration for the app.
 /// All navigation must go through this router — no raw Navigator.push() calls.
@@ -50,10 +48,7 @@ class AppRouter {
           GoRoute(
             path: RoutePaths.dashboard,
             name: RouteNames.dashboard,
-            builder: (context, state) {
-              sl<DashboardBloc>().add(const LoadDashboard());
-              return DashboardPage(key: state.pageKey);
-            },
+            builder: (context, state) => DashboardPage(key: state.pageKey),
           ),
           GoRoute(
             path: RoutePaths.customers,
@@ -234,7 +229,6 @@ class _BottomNav extends StatelessWidget {
       onTap: (index) {
         switch (index) {
           case 0:
-            sl<DashboardBloc>().add(const LoadDashboard());
             context.go(RoutePaths.dashboard);
           case 1:
             context.go(RoutePaths.customers);

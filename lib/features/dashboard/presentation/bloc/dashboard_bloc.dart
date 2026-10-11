@@ -3,6 +3,9 @@ import 'package:mobile_emi_manager/core/errors/error_mapper.dart';
 import 'package:mobile_emi_manager/core/utils/logger.dart';
 import 'package:mobile_emi_manager/features/dashboard/data/models/dashboard_model.dart';
 import 'package:mobile_emi_manager/features/dashboard/domain/repositories/dashboard_repository.dart';
+import 'package:mobile_emi_manager/core/constants/api_constants.dart';
+import 'package:mobile_emi_manager/core/di/injection_container.dart';
+import 'package:mobile_emi_manager/core/network/api_cache_manager.dart';
 import 'dashboard_bloc_exports.dart';
 export 'dashboard_bloc_exports.dart';
 
@@ -21,6 +24,7 @@ class DashboardBloc extends Bloc<DashboardEvent, DashboardState> {
     LoadDashboard event,
     Emitter<DashboardState> emit,
   ) async {
+    if (state is DashboardLoading) return;
     AppLogger.bloc('DashboardBloc', 'LoadDashboard');
     emit(const DashboardLoading());
     try {
@@ -38,6 +42,7 @@ class DashboardBloc extends Bloc<DashboardEvent, DashboardState> {
     Emitter<DashboardState> emit,
   ) async {
     AppLogger.bloc('DashboardBloc', 'RefreshDashboard');
+    sl<ApiCacheManager>().invalidate(ApiEndpoints.dashboard);
     add(const LoadDashboard());
   }
 

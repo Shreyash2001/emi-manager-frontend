@@ -108,35 +108,48 @@ class _DeviceLoan {
   });
 
   factory _DeviceLoan.fromJson(Map<String, dynamic> json) {
-    final saleTypeStr = (json['saleType'] as String?)?.toUpperCase() ??
-        ((json['monthlyEmi'] != null || json['monthlyInstallment'] != null) ? 'EMI' : 'CASH');
+    final saleTypeStr =
+        (json['saleType'] as String?)?.toUpperCase() ??
+        ((json['monthlyEmi'] != null || json['monthlyInstallment'] != null)
+            ? 'EMI'
+            : 'CASH');
     return _DeviceLoan(
       id: json['id']?.toString() ?? json['_id']?.toString(),
       brand: json['brand'] as String? ?? '',
       model: json['model'] as String? ?? json['modelName'] as String? ?? '',
-      storage: json['storage'] as String? ?? json['storageVariant'] as String? ?? '—',
+      storage:
+          json['storage'] as String? ??
+          json['storageVariant'] as String? ??
+          '—',
       color: json['color'] as String? ?? '—',
       imei: json['imei'] as String? ?? '',
       saleType: saleTypeStr,
-      principal: (json['principal'] as num?)?.toDouble() ??
+      principal:
+          (json['principal'] as num?)?.toDouble() ??
           (json['loanAmount'] as num?)?.toDouble() ??
           (json['sellingPrice'] as num?)?.toDouble() ??
           0.0,
       sellingPrice: (json['sellingPrice'] as num?)?.toDouble(),
-      monthlyEmi: (json['monthlyEmi'] as num?)?.toDouble() ??
+      monthlyEmi:
+          (json['monthlyEmi'] as num?)?.toDouble() ??
           (json['monthlyInstallment'] as num?)?.toDouble() ??
           0.0,
-      emiPaid: (json['emiPaid'] as num?)?.toInt() ??
+      emiPaid:
+          (json['emiPaid'] as num?)?.toInt() ??
           (json['paidInstallments'] as num?)?.toInt() ??
           0,
-      emiTotal: (json['emiTotal'] as num?)?.toInt() ??
+      emiTotal:
+          (json['emiTotal'] as num?)?.toInt() ??
           (json['totalEmiMonths'] as num?)?.toInt() ??
           (json['tenureMonths'] as num?)?.toInt() ??
           0,
-      isDefaulted: json['isDefaulted'] as bool? ??
+      isDefaulted:
+          json['isDefaulted'] as bool? ??
           (json['status'] == 'OVERDUE' ||
               ((json['overdueDays'] as num?)?.toInt() ?? 0) > 0),
-      status: json['status'] as String? ?? (saleTypeStr == 'CASH' ? 'CASH' : 'ACTIVE'),
+      status:
+          json['status'] as String? ??
+          (saleTypeStr == 'CASH' ? 'CASH' : 'ACTIVE'),
       notes: json['notes'] as String?,
       emiPlanId: json['emiPlanId']?.toString() ?? json['planId']?.toString(),
     );
@@ -227,55 +240,92 @@ class _CustomerProfile {
         }
       }
 
-      final isCash = (h['saleType']?.toString().toUpperCase() == 'CASH') ||
+      final isCash =
+          (h['saleType']?.toString().toUpperCase() == 'CASH') ||
           (matchingPlan == null && (hEmiPlanId == null || hEmiPlanId.isEmpty));
 
       if (matchingPlan != null) {
         final pH = matchingPlan['handset'] as Map<String, dynamic>?;
-        devicesList.add(_DeviceLoan(
-          id: h['id']?.toString() ?? matchingPlan['id']?.toString(),
-          brand: (h['brand']?.toString().isNotEmpty == true ? h['brand'] : pH?['brand'])?.toString() ?? '',
-          model: (h['modelName']?.toString().isNotEmpty == true ? h['modelName'] : (pH?['modelName'] ?? matchingPlan['deviceName']))?.toString() ?? '',
-          storage: (h['storageVariant']?.toString().isNotEmpty == true ? h['storageVariant'] : pH?['storage'])?.toString() ?? '—',
-          color: (h['color']?.toString().isNotEmpty == true ? h['color'] : pH?['color'])?.toString() ?? '—',
-          imei: (h['imei']?.toString().isNotEmpty == true ? h['imei'] : (pH?['imei'] ?? matchingPlan['imei']))?.toString() ?? '',
-          saleType: 'EMI',
-          principal: (matchingPlan['loanAmount'] as num?)?.toDouble() ??
-              (matchingPlan['sellingPrice'] as num?)?.toDouble() ??
-              (h['sellingPrice'] as num?)?.toDouble() ??
-              0.0,
-          sellingPrice: (h['sellingPrice'] as num?)?.toDouble() ??
-              (matchingPlan['sellingPrice'] as num?)?.toDouble(),
-          monthlyEmi: (matchingPlan['monthlyInstallment'] as num?)?.toDouble() ?? 0.0,
-          emiPaid: (matchingPlan['paidInstallments'] as num?)?.toInt() ?? 0,
-          emiTotal: (matchingPlan['tenureMonths'] as num?)?.toInt() ??
-              (matchingPlan['totalEmiMonths'] as num?)?.toInt() ??
-              0,
-          isDefaulted: matchingPlan['status'] == 'OVERDUE' ||
-              ((matchingPlan['overdueDays'] as num?)?.toInt() ?? 0) > 0,
-          status: matchingPlan['status']?.toString() ?? 'ON_TRACK',
-          notes: h['notes']?.toString(),
-          emiPlanId: matchingPlan['id']?.toString() ?? matchingPlan['planId']?.toString(),
-        ));
+        devicesList.add(
+          _DeviceLoan(
+            id: h['id']?.toString() ?? matchingPlan['id']?.toString(),
+            brand:
+                (h['brand']?.toString().isNotEmpty == true
+                        ? h['brand']
+                        : pH?['brand'])
+                    ?.toString() ??
+                '',
+            model:
+                (h['modelName']?.toString().isNotEmpty == true
+                        ? h['modelName']
+                        : (pH?['modelName'] ?? matchingPlan['deviceName']))
+                    ?.toString() ??
+                '',
+            storage:
+                (h['storageVariant']?.toString().isNotEmpty == true
+                        ? h['storageVariant']
+                        : pH?['storage'])
+                    ?.toString() ??
+                '—',
+            color:
+                (h['color']?.toString().isNotEmpty == true
+                        ? h['color']
+                        : pH?['color'])
+                    ?.toString() ??
+                '—',
+            imei:
+                (h['imei']?.toString().isNotEmpty == true
+                        ? h['imei']
+                        : (pH?['imei'] ?? matchingPlan['imei']))
+                    ?.toString() ??
+                '',
+            saleType: 'EMI',
+            principal:
+                (matchingPlan['loanAmount'] as num?)?.toDouble() ??
+                (matchingPlan['sellingPrice'] as num?)?.toDouble() ??
+                (h['sellingPrice'] as num?)?.toDouble() ??
+                0.0,
+            sellingPrice:
+                (h['sellingPrice'] as num?)?.toDouble() ??
+                (matchingPlan['sellingPrice'] as num?)?.toDouble(),
+            monthlyEmi:
+                (matchingPlan['monthlyInstallment'] as num?)?.toDouble() ?? 0.0,
+            emiPaid: (matchingPlan['paidInstallments'] as num?)?.toInt() ?? 0,
+            emiTotal:
+                (matchingPlan['tenureMonths'] as num?)?.toInt() ??
+                (matchingPlan['totalEmiMonths'] as num?)?.toInt() ??
+                0,
+            isDefaulted:
+                matchingPlan['status'] == 'OVERDUE' ||
+                ((matchingPlan['overdueDays'] as num?)?.toInt() ?? 0) > 0,
+            status: matchingPlan['status']?.toString() ?? 'ON_TRACK',
+            notes: h['notes']?.toString(),
+            emiPlanId:
+                matchingPlan['id']?.toString() ??
+                matchingPlan['planId']?.toString(),
+          ),
+        );
       } else {
-        devicesList.add(_DeviceLoan(
-          id: h['id']?.toString(),
-          brand: h['brand']?.toString() ?? '',
-          model: h['modelName']?.toString() ?? '',
-          storage: h['storageVariant']?.toString() ?? '—',
-          color: h['color']?.toString() ?? '—',
-          imei: h['imei']?.toString() ?? '',
-          saleType: isCash ? 'CASH' : 'EMI',
-          principal: (h['sellingPrice'] as num?)?.toDouble() ?? 0.0,
-          sellingPrice: (h['sellingPrice'] as num?)?.toDouble() ?? 0.0,
-          monthlyEmi: 0.0,
-          emiPaid: 0,
-          emiTotal: 0,
-          isDefaulted: false,
-          status: isCash ? 'CASH' : 'ACTIVE',
-          notes: h['notes']?.toString(),
-          emiPlanId: null,
-        ));
+        devicesList.add(
+          _DeviceLoan(
+            id: h['id']?.toString(),
+            brand: h['brand']?.toString() ?? '',
+            model: h['modelName']?.toString() ?? '',
+            storage: h['storageVariant']?.toString() ?? '—',
+            color: h['color']?.toString() ?? '—',
+            imei: h['imei']?.toString() ?? '',
+            saleType: isCash ? 'CASH' : 'EMI',
+            principal: (h['sellingPrice'] as num?)?.toDouble() ?? 0.0,
+            sellingPrice: (h['sellingPrice'] as num?)?.toDouble() ?? 0.0,
+            monthlyEmi: 0.0,
+            emiPaid: 0,
+            emiTotal: 0,
+            isDefaulted: false,
+            status: isCash ? 'CASH' : 'ACTIVE',
+            notes: h['notes']?.toString(),
+            emiPlanId: null,
+          ),
+        );
       }
     }
 
@@ -286,34 +336,45 @@ class _CustomerProfile {
       if (pId != null && matchedPlanIds.contains(pId)) continue;
 
       final pH = pRaw['handset'] as Map<String, dynamic>?;
-      devicesList.add(_DeviceLoan(
-        id: pId,
-        brand: pH?['brand']?.toString() ?? pRaw['brand']?.toString() ?? '',
-        model: pH?['modelName']?.toString() ?? pRaw['modelName']?.toString() ?? pRaw['deviceName']?.toString() ?? '',
-        storage: pH?['storage']?.toString() ?? pRaw['storage']?.toString() ?? '—',
-        color: pH?['color']?.toString() ?? pRaw['color']?.toString() ?? '—',
-        imei: pH?['imei']?.toString() ?? pRaw['imei']?.toString() ?? '',
-        saleType: 'EMI',
-        principal: (pRaw['loanAmount'] as num?)?.toDouble() ??
-            (pRaw['sellingPrice'] as num?)?.toDouble() ??
-            0.0,
-        sellingPrice: (pRaw['sellingPrice'] as num?)?.toDouble(),
-        monthlyEmi: (pRaw['monthlyInstallment'] as num?)?.toDouble() ?? 0.0,
-        emiPaid: (pRaw['paidInstallments'] as num?)?.toInt() ?? 0,
-        emiTotal: (pRaw['tenureMonths'] as num?)?.toInt() ??
-            (pRaw['totalEmiMonths'] as num?)?.toInt() ??
-            0,
-        isDefaulted: pRaw['status'] == 'OVERDUE' ||
-            ((pRaw['overdueDays'] as num?)?.toInt() ?? 0) > 0,
-        status: pRaw['status']?.toString() ?? 'ON_TRACK',
-        notes: null,
-        emiPlanId: pId,
-      ));
+      devicesList.add(
+        _DeviceLoan(
+          id: pId,
+          brand: pH?['brand']?.toString() ?? pRaw['brand']?.toString() ?? '',
+          model:
+              pH?['modelName']?.toString() ??
+              pRaw['modelName']?.toString() ??
+              pRaw['deviceName']?.toString() ??
+              '',
+          storage:
+              pH?['storage']?.toString() ?? pRaw['storage']?.toString() ?? '—',
+          color: pH?['color']?.toString() ?? pRaw['color']?.toString() ?? '—',
+          imei: pH?['imei']?.toString() ?? pRaw['imei']?.toString() ?? '',
+          saleType: 'EMI',
+          principal:
+              (pRaw['loanAmount'] as num?)?.toDouble() ??
+              (pRaw['sellingPrice'] as num?)?.toDouble() ??
+              0.0,
+          sellingPrice: (pRaw['sellingPrice'] as num?)?.toDouble(),
+          monthlyEmi: (pRaw['monthlyInstallment'] as num?)?.toDouble() ?? 0.0,
+          emiPaid: (pRaw['paidInstallments'] as num?)?.toInt() ?? 0,
+          emiTotal:
+              (pRaw['tenureMonths'] as num?)?.toInt() ??
+              (pRaw['totalEmiMonths'] as num?)?.toInt() ??
+              0,
+          isDefaulted:
+              pRaw['status'] == 'OVERDUE' ||
+              ((pRaw['overdueDays'] as num?)?.toInt() ?? 0) > 0,
+          status: pRaw['status']?.toString() ?? 'ON_TRACK',
+          notes: null,
+          emiPlanId: pId,
+        ),
+      );
     }
 
     // 3. Fallback to activeLoan if devicesList is still empty
     if (devicesList.isEmpty) {
-      Map<String, dynamic>? activeLoanJson = json['activeLoan'] as Map<String, dynamic>?;
+      Map<String, dynamic>? activeLoanJson =
+          json['activeLoan'] as Map<String, dynamic>?;
       if (activeLoanJson == null && emiPlansList.isNotEmpty) {
         final p = emiPlansList.first as Map<String, dynamic>;
         final h = p['handset'] as Map<String, dynamic>?;
@@ -328,7 +389,9 @@ class _CustomerProfile {
           'monthlyEmi': p['monthlyInstallment'] ?? p['installmentAmount'] ?? 0,
           'emiPaid': p['paidInstallments'] ?? p['currentEmiNumber'] ?? 0,
           'emiTotal': p['totalEmiMonths'] ?? p['tenureMonths'] ?? 0,
-          'isDefaulted': (p['status'] == 'OVERDUE' || ((p['overdueDays'] as num?)?.toInt() ?? 0) > 0),
+          'isDefaulted':
+              (p['status'] == 'OVERDUE' ||
+              ((p['overdueDays'] as num?)?.toInt() ?? 0) > 0),
         };
       }
       if (activeLoanJson != null) {
@@ -338,16 +401,29 @@ class _CustomerProfile {
 
     _DeviceLoan? activeLoan;
     if (json['activeLoan'] is Map<String, dynamic>) {
-      activeLoan = _DeviceLoan.fromJson(json['activeLoan'] as Map<String, dynamic>);
+      activeLoan = _DeviceLoan.fromJson(
+        json['activeLoan'] as Map<String, dynamic>,
+      );
     } else {
-      activeLoan = devicesList.where((d) => d.saleType == 'EMI' && d.status != 'CLEARED').firstOrNull ??
+      activeLoan =
+          devicesList
+              .where((d) => d.saleType == 'EMI' && d.status != 'CLEARED')
+              .firstOrNull ??
           devicesList.firstOrNull;
     }
 
-    final nameStr = json['name'] as String? ?? json['fullName'] as String? ?? 'Customer';
-    final initialsStr = json['initials'] as String? ??
+    final nameStr =
+        json['name'] as String? ?? json['fullName'] as String? ?? 'Customer';
+    final initialsStr =
+        json['initials'] as String? ??
         (nameStr.trim().isNotEmpty
-            ? nameStr.trim().split(' ').map((e) => e.isNotEmpty ? e[0] : '').take(2).join().toUpperCase()
+            ? nameStr
+                  .trim()
+                  .split(' ')
+                  .map((e) => e.isNotEmpty ? e[0] : '')
+                  .take(2)
+                  .join()
+                  .toUpperCase()
             : '?');
 
     final payHistory = (json['paymentHistory'] as List<dynamic>? ?? [])
@@ -369,7 +445,8 @@ class _CustomerProfile {
       recoveryMethod: json['recoveryMethod'] as String? ?? 'Via Cash & UPI',
       overdueAmount: (json['overdueAmount'] as num?)?.toDouble() ?? 0.0,
       overdueDays: (json['overdueDays'] as num?)?.toInt() ?? 0,
-      upcomingInstallment: (json['upcomingInstallment'] as num?)?.toDouble() ?? 0.0,
+      upcomingInstallment:
+          (json['upcomingInstallment'] as num?)?.toDouble() ?? 0.0,
       upcomingDate: json['upcomingDate'] as String? ?? '—',
       activeLoan: activeLoan,
       devices: devicesList,
@@ -402,7 +479,9 @@ class _CustomerDetailsPageState extends State<CustomerDetailsPage> {
   }
 
   void _fetchDetails() {
-    _detailsFuture = sl<CustomerRepository>().getCustomerDetails(widget.customerId);
+    _detailsFuture = sl<CustomerRepository>().getCustomerDetails(
+      widget.customerId,
+    );
   }
 
   @override
@@ -411,9 +490,7 @@ class _CustomerDetailsPageState extends State<CustomerDetailsPage> {
       future: _detailsFuture,
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
-          return const Scaffold(
-            body: AppLoader(),
-          );
+          return const Scaffold(body: AppLoader());
         }
 
         if (snapshot.hasError) {
@@ -508,9 +585,10 @@ class _CustomerProfileView extends StatelessWidget {
               ? []
               : const [
                   BoxShadow(
-                      color: Color(0x0D000000),
-                      blurRadius: 6,
-                      offset: Offset(0, 2)),
+                    color: Color(0x0D000000),
+                    blurRadius: 6,
+                    offset: Offset(0, 2),
+                  ),
                 ],
         ),
         child: SafeArea(
@@ -524,8 +602,11 @@ class _CustomerProfileView extends StatelessWidget {
                     context.go(RoutePaths.customers);
                   }
                 },
-                icon: Icon(Icons.arrow_back_ios_new_rounded,
-                    size: 18, color: textColor),
+                icon: Icon(
+                  Icons.arrow_back_ios_new_rounded,
+                  size: 18,
+                  color: textColor,
+                ),
               ),
               Expanded(
                 child: Text(
@@ -536,11 +617,6 @@ class _CustomerProfileView extends StatelessWidget {
                     color: textColor,
                   ),
                 ),
-              ),
-              IconButton(
-                onPressed: () {},
-                icon: Icon(Icons.more_vert_rounded,
-                    size: 20, color: textColor),
               ),
             ],
           ),
@@ -579,9 +655,10 @@ class _CustomerProfileView extends StatelessWidget {
                   child: Text(
                     profile.initials,
                     style: GoogleFonts.inter(
-                        fontSize: 20,
-                        fontWeight: FontWeight.w800,
-                        color: Colors.white),
+                      fontSize: 20,
+                      fontWeight: FontWeight.w800,
+                      color: Colors.white,
+                    ),
                   ),
                 ),
               ),
@@ -610,36 +687,60 @@ class _CustomerProfileView extends StatelessWidget {
                     const SizedBox(height: 3),
                     Row(
                       children: [
-                        const Icon(Icons.phone_rounded,
-                            size: 12, color: _kGreen),
+                        const Icon(
+                          Icons.phone_rounded,
+                          size: 12,
+                          color: _kGreen,
+                        ),
                         const SizedBox(width: 4),
-                        Text(profile.phone,
-                            style: GoogleFonts.inter(
-                                fontSize: 12, color: secondaryTextColor)),
+                        Text(
+                          profile.phone,
+                          style: GoogleFonts.inter(
+                            fontSize: 12,
+                            color: secondaryTextColor,
+                          ),
+                        ),
                         const SizedBox(width: 6),
                         GestureDetector(
                           onTap: () {},
-                          child: const Icon(Icons.edit_rounded,
-                              size: 13, color: _kPurple),
+                          child: const Icon(
+                            Icons.edit_rounded,
+                            size: 13,
+                            color: _kPurple,
+                          ),
                         ),
                       ],
                     ),
                     const SizedBox(height: 3),
                     Row(
                       children: [
-                        Icon(Icons.location_on_outlined,
-                            size: 12, color: secondaryTextColor),
+                        Icon(
+                          Icons.location_on_outlined,
+                          size: 12,
+                          color: secondaryTextColor,
+                        ),
                         const SizedBox(width: 3),
-                        Text(profile.address,
-                            style: GoogleFonts.inter(
-                                fontSize: 11, color: secondaryTextColor)),
+                        Text(
+                          profile.address,
+                          style: GoogleFonts.inter(
+                            fontSize: 11,
+                            color: secondaryTextColor,
+                          ),
+                        ),
                         const SizedBox(width: 6),
-                        Icon(Icons.calendar_today_outlined,
-                            size: 11, color: secondaryTextColor),
+                        Icon(
+                          Icons.calendar_today_outlined,
+                          size: 11,
+                          color: secondaryTextColor,
+                        ),
                         const SizedBox(width: 3),
-                        Text('Since ${profile.memberSince}',
-                            style: GoogleFonts.inter(
-                                fontSize: 11, color: secondaryTextColor)),
+                        Text(
+                          'Since ${profile.memberSince}',
+                          style: GoogleFonts.inter(
+                            fontSize: 11,
+                            color: secondaryTextColor,
+                          ),
+                        ),
                       ],
                     ),
                   ],
@@ -712,7 +813,10 @@ class _CustomerProfileView extends StatelessWidget {
             Text(
               label,
               style: GoogleFonts.inter(
-                  fontSize: 12, fontWeight: FontWeight.w700, color: fg),
+                fontSize: 12,
+                fontWeight: FontWeight.w700,
+                color: fg,
+              ),
               textAlign: TextAlign.center,
             ),
           ],
@@ -734,16 +838,18 @@ class _CustomerProfileView extends StatelessWidget {
         children: [
           Row(
             children: [
-              Text('KHATA SUMMARY',
-                  style: GoogleFonts.inter(
-                      fontSize: 11,
-                      fontWeight: FontWeight.w700,
-                      letterSpacing: 0.8,
-                      color: secondaryTextColor)),
+              Text(
+                'KHATA SUMMARY',
+                style: GoogleFonts.inter(
+                  fontSize: 11,
+                  fontWeight: FontWeight.w700,
+                  letterSpacing: 0.8,
+                  color: secondaryTextColor,
+                ),
+              ),
               const Spacer(),
               Container(
-                padding:
-                    const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
+                padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
                 decoration: BoxDecoration(
                   color: isDark ? _kGreen.withValues(alpha: 0.2) : _kGreenLight,
                   borderRadius: BorderRadius.circular(20),
@@ -751,15 +857,15 @@ class _CustomerProfileView extends StatelessWidget {
                 child: Row(
                   mainAxisSize: MainAxisSize.min,
                   children: [
-                    const Icon(Icons.shield_rounded,
-                        size: 10, color: _kGreen),
+                    const Icon(Icons.shield_rounded, size: 10, color: _kGreen),
                     const SizedBox(width: 3),
                     Text(
                       'Trust Score: ${profile.trustScore}/100',
                       style: GoogleFonts.inter(
-                          fontSize: 10,
-                          fontWeight: FontWeight.w700,
-                          color: _kGreen),
+                        fontSize: 10,
+                        fontWeight: FontWeight.w700,
+                        color: _kGreen,
+                      ),
                     ),
                   ],
                 ),
@@ -815,18 +921,25 @@ class _CustomerProfileView extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text(label,
-            style: GoogleFonts.inter(fontSize: 11, color: secondaryTextColor)),
+        Text(
+          label,
+          style: GoogleFonts.inter(fontSize: 11, color: secondaryTextColor),
+        ),
         const SizedBox(height: 4),
-        Text(value,
-            style: GoogleFonts.inter(
-                fontSize: 20,
-                fontWeight: FontWeight.w800,
-                color: valueColor,
-                height: 1.1)),
+        Text(
+          value,
+          style: GoogleFonts.inter(
+            fontSize: 20,
+            fontWeight: FontWeight.w800,
+            color: valueColor,
+            height: 1.1,
+          ),
+        ),
         const SizedBox(height: 2),
-        Text(sub,
-            style: GoogleFonts.inter(fontSize: 10, color: secondaryTextColor)),
+        Text(
+          sub,
+          style: GoogleFonts.inter(fontSize: 10, color: secondaryTextColor),
+        ),
       ],
     );
   }
@@ -853,16 +966,20 @@ class _CustomerProfileView extends StatelessWidget {
               children: [
                 Row(
                   children: [
-                    const Icon(Icons.warning_amber_rounded,
-                        size: 13, color: _kRed),
+                    const Icon(
+                      Icons.warning_amber_rounded,
+                      size: 13,
+                      color: _kRed,
+                    ),
                     const SizedBox(width: 4),
                     Text(
                       'OVERDUE BY ${profile.overdueDays} DAYS',
                       style: GoogleFonts.inter(
-                          fontSize: 10,
-                          fontWeight: FontWeight.w700,
-                          color: _kRed,
-                          letterSpacing: 0.5),
+                        fontSize: 10,
+                        fontWeight: FontWeight.w700,
+                        color: _kRed,
+                        letterSpacing: 0.5,
+                      ),
                     ),
                   ],
                 ),
@@ -870,10 +987,11 @@ class _CustomerProfileView extends StatelessWidget {
                 Text(
                   '₹${fmt.format(profile.overdueAmount)}',
                   style: GoogleFonts.inter(
-                      fontSize: 26,
-                      fontWeight: FontWeight.w900,
-                      color: _kRed,
-                      height: 1.1),
+                    fontSize: 26,
+                    fontWeight: FontWeight.w900,
+                    color: _kRed,
+                    height: 1.1,
+                  ),
                 ),
               ],
             ),
@@ -881,15 +999,21 @@ class _CustomerProfileView extends StatelessWidget {
           Column(
             crossAxisAlignment: CrossAxisAlignment.end,
             children: [
-              Text('Upcoming Installment',
-                  style: GoogleFonts.inter(fontSize: 10, color: secondaryTextColor)),
+              Text(
+                'Upcoming Installment',
+                style: GoogleFonts.inter(
+                  fontSize: 10,
+                  color: secondaryTextColor,
+                ),
+              ),
               const SizedBox(height: 4),
               Text(
                 profile.upcomingDate,
                 style: GoogleFonts.inter(
-                    fontSize: 13,
-                    fontWeight: FontWeight.w700,
-                    color: primaryTextColor),
+                  fontSize: 13,
+                  fontWeight: FontWeight.w700,
+                  color: primaryTextColor,
+                ),
               ),
             ],
           ),
@@ -919,16 +1043,20 @@ class _CustomerProfileView extends StatelessWidget {
                   color: isDark ? AppColors.surfaceDark : _kGreyLight,
                   shape: BoxShape.circle,
                 ),
-                child: Icon(Icons.phone_android_rounded,
-                    size: 18, color: secondaryTextColor),
+                child: Icon(
+                  Icons.phone_android_rounded,
+                  size: 18,
+                  color: secondaryTextColor,
+                ),
               ),
               const SizedBox(width: 12),
               Text(
                 'No devices registered for this customer',
                 style: GoogleFonts.inter(
-                    fontSize: 13,
-                    color: secondaryTextColor,
-                    fontWeight: FontWeight.w500),
+                  fontSize: 13,
+                  color: secondaryTextColor,
+                  fontWeight: FontWeight.w500,
+                ),
               ),
             ],
           ),
@@ -946,57 +1074,75 @@ class _CustomerProfileView extends StatelessWidget {
           // Header
           Row(
             children: [
-              Icon(Icons.phone_android_rounded,
-                  size: 15, color: primaryTextColor),
+              Icon(
+                Icons.phone_android_rounded,
+                size: 15,
+                color: primaryTextColor,
+              ),
               const SizedBox(width: 6),
               Text(
                 devices.length > 1
                     ? 'Active Loans & Devices'
                     : 'Active Loan & Device',
                 style: GoogleFonts.inter(
-                    fontSize: 13,
-                    fontWeight: FontWeight.w700,
-                    color: primaryTextColor),
+                  fontSize: 13,
+                  fontWeight: FontWeight.w700,
+                  color: primaryTextColor,
+                ),
               ),
               const Spacer(),
               if (hasDefaulted)
                 Container(
                   padding: const EdgeInsets.symmetric(
-                      horizontal: 8, vertical: 3),
+                    horizontal: 8,
+                    vertical: 3,
+                  ),
                   decoration: BoxDecoration(
-                    color: isDark ? Colors.red.withValues(alpha: 0.2) : _kRedLight,
+                    color: isDark
+                        ? Colors.red.withValues(alpha: 0.2)
+                        : _kRedLight,
                     borderRadius: BorderRadius.circular(20),
-                    border: Border.all(
-                        color: _kRed.withValues(alpha: 0.3)),
+                    border: Border.all(color: _kRed.withValues(alpha: 0.3)),
                   ),
                   child: Row(
                     mainAxisSize: MainAxisSize.min,
                     children: [
-                      const Icon(Icons.error_outline_rounded,
-                          size: 10, color: _kRed),
+                      const Icon(
+                        Icons.error_outline_rounded,
+                        size: 10,
+                        color: _kRed,
+                      ),
                       const SizedBox(width: 3),
-                      Text('EMI Defaulted',
-                          style: GoogleFonts.inter(
-                              fontSize: 10,
-                              fontWeight: FontWeight.w700,
-                              color: _kRed)),
+                      Text(
+                        'EMI Defaulted',
+                        style: GoogleFonts.inter(
+                          fontSize: 10,
+                          fontWeight: FontWeight.w700,
+                          color: _kRed,
+                        ),
+                      ),
                     ],
                   ),
                 )
               else if (devices.length > 1)
                 Container(
                   padding: const EdgeInsets.symmetric(
-                      horizontal: 8, vertical: 3),
+                    horizontal: 8,
+                    vertical: 3,
+                  ),
                   decoration: BoxDecoration(
-                    color: isDark ? _kPurple.withValues(alpha: 0.2) : _kPurpleLight,
+                    color: isDark
+                        ? _kPurple.withValues(alpha: 0.2)
+                        : _kPurpleLight,
                     borderRadius: BorderRadius.circular(20),
                   ),
                   child: Text(
                     '${devices.length} Handsets',
                     style: GoogleFonts.inter(
-                        fontSize: 10,
-                        fontWeight: FontWeight.w700,
-                        color: _kPurple),
+                      fontSize: 10,
+                      fontWeight: FontWeight.w700,
+                      color: _kPurple,
+                    ),
                   ),
                 ),
             ],
@@ -1046,7 +1192,9 @@ class _CustomerProfileView extends StatelessWidget {
               Container(
                 padding: const EdgeInsets.symmetric(horizontal: 7, vertical: 2),
                 decoration: BoxDecoration(
-                  color: isDark ? AppColors.surfaceDark : const Color(0xFFF1F5F9),
+                  color: isDark
+                      ? AppColors.surfaceDark
+                      : const Color(0xFFF1F5F9),
                   borderRadius: BorderRadius.circular(6),
                 ),
                 child: Text(
@@ -1109,8 +1257,11 @@ class _CustomerProfileView extends StatelessWidget {
                   borderRadius: BorderRadius.circular(10),
                 ),
                 child: const Center(
-                  child: Icon(Icons.phone_android_rounded,
-                      color: Colors.white, size: 24),
+                  child: Icon(
+                    Icons.phone_android_rounded,
+                    color: Colors.white,
+                    size: 24,
+                  ),
                 ),
               ),
               const SizedBox(width: 12),
@@ -1123,29 +1274,35 @@ class _CustomerProfileView extends StatelessWidget {
                           ? '${loan.brand} ${loan.model}'.trim()
                           : 'Handset Device',
                       style: GoogleFonts.inter(
-                          fontSize: 13,
-                          fontWeight: FontWeight.w700,
-                          color: primaryTextColor),
+                        fontSize: 13,
+                        fontWeight: FontWeight.w700,
+                        color: primaryTextColor,
+                      ),
                     ),
                     Text(
                       '${loan.storage} • ${loan.color}',
                       style: GoogleFonts.inter(
-                          fontSize: 11, color: secondaryTextColor),
+                        fontSize: 11,
+                        color: secondaryTextColor,
+                      ),
                     ),
                     const SizedBox(height: 2),
                     Text(
                       'IMEI: ${loan.imei.isNotEmpty ? loan.imei : '—'}',
                       style: GoogleFonts.inter(
-                          fontSize: 10, color: secondaryTextColor),
+                        fontSize: 10,
+                        color: secondaryTextColor,
+                      ),
                     ),
                     if (loan.notes != null && loan.notes!.isNotEmpty) ...[
                       const SizedBox(height: 2),
                       Text(
                         'Note: ${loan.notes}',
                         style: GoogleFonts.inter(
-                            fontSize: 10,
-                            fontStyle: FontStyle.italic,
-                            color: secondaryTextColor),
+                          fontSize: 10,
+                          fontStyle: FontStyle.italic,
+                          color: secondaryTextColor,
+                        ),
                         maxLines: 1,
                         overflow: TextOverflow.ellipsis,
                       ),
@@ -1171,8 +1328,11 @@ class _CustomerProfileView extends StatelessWidget {
             ),
             child: Row(
               children: [
-                const Icon(Icons.check_circle_rounded,
-                    size: 16, color: _kGreen),
+                const Icon(
+                  Icons.check_circle_rounded,
+                  size: 16,
+                  color: _kGreen,
+                ),
                 const SizedBox(width: 8),
                 Text(
                   'Cash Sale (Paid in Full)',
@@ -1201,17 +1361,22 @@ class _CustomerProfileView extends StatelessWidget {
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              Text('Installment Progress',
-                  style: GoogleFonts.inter(
-                      fontSize: 11, color: secondaryTextColor)),
+              Text(
+                'Installment Progress',
+                style: GoogleFonts.inter(
+                  fontSize: 11,
+                  color: secondaryTextColor,
+                ),
+              ),
               Text(
                 loan.status == 'CLEARED'
                     ? 'All ${loan.emiTotal} EMIs Cleared'
                     : 'EMI #${loan.emiPaid} of ${loan.emiTotal}',
                 style: GoogleFonts.inter(
-                    fontSize: 11,
-                    fontWeight: FontWeight.w700,
-                    color: loan.status == 'CLEARED' ? _kGreen : _kPurple),
+                  fontSize: 11,
+                  fontWeight: FontWeight.w700,
+                  color: loan.status == 'CLEARED' ? _kGreen : _kPurple,
+                ),
               ),
             ],
           ),
@@ -1232,15 +1397,19 @@ class _CustomerProfileView extends StatelessWidget {
             children: [
               Text(
                 'Loan Principal: ₹${fmt.format(loan.principal)}',
-                style: GoogleFonts.inter(fontSize: 11, color: secondaryTextColor),
+                style: GoogleFonts.inter(
+                  fontSize: 11,
+                  color: secondaryTextColor,
+                ),
               ),
               const Spacer(),
               Text(
                 'Monthly: ₹${fmt.format(loan.monthlyEmi)}',
                 style: GoogleFonts.inter(
-                    fontSize: 11,
-                    fontWeight: FontWeight.w600,
-                    color: primaryTextColor),
+                  fontSize: 11,
+                  fontWeight: FontWeight.w600,
+                  color: primaryTextColor,
+                ),
               ),
             ],
           ),
@@ -1269,15 +1438,21 @@ class _CustomerProfileView extends StatelessWidget {
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    const Icon(Icons.payments_rounded,
-                        size: 16, color: Colors.white),
+                    const Icon(
+                      Icons.payments_rounded,
+                      size: 16,
+                      color: Colors.white,
+                    ),
                     const SizedBox(width: 8),
-                    Text('Record Payment',
-                        style: GoogleFonts.inter(
-                            fontSize: 13,
-                            fontWeight: FontWeight.w700,
-                            color: Colors.white),
-                        textAlign: TextAlign.center),
+                    Text(
+                      'Record Payment',
+                      style: GoogleFonts.inter(
+                        fontSize: 13,
+                        fontWeight: FontWeight.w700,
+                        color: Colors.white,
+                      ),
+                      textAlign: TextAlign.center,
+                    ),
                   ],
                 ),
               ),
@@ -1309,7 +1484,10 @@ class _CustomerProfileView extends StatelessWidget {
           Text(
             label,
             style: GoogleFonts.inter(
-                fontSize: 10, fontWeight: FontWeight.w700, color: color),
+              fontSize: 10,
+              fontWeight: FontWeight.w700,
+              color: color,
+            ),
           ),
         ],
       ),
@@ -1328,24 +1506,30 @@ class _CustomerProfileView extends StatelessWidget {
         children: [
           Row(
             children: [
-              Text('Payment History',
-                  style: GoogleFonts.inter(
-                      fontSize: 14,
-                      fontWeight: FontWeight.w700,
-                      color: primaryTextColor)),
+              Text(
+                'Payment History',
+                style: GoogleFonts.inter(
+                  fontSize: 14,
+                  fontWeight: FontWeight.w700,
+                  color: primaryTextColor,
+                ),
+              ),
               const Spacer(),
               Container(
-                padding: const EdgeInsets.symmetric(
-                    horizontal: 8, vertical: 3),
+                padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
                 decoration: BoxDecoration(
-                    color: isDark ? _kPurple.withValues(alpha: 0.2) : _kPurpleLight,
-                    borderRadius: BorderRadius.circular(20)),
+                  color: isDark
+                      ? _kPurple.withValues(alpha: 0.2)
+                      : _kPurpleLight,
+                  borderRadius: BorderRadius.circular(20),
+                ),
                 child: Text(
                   '${profile.paymentHistory.length} Records',
                   style: GoogleFonts.inter(
-                      fontSize: 10,
-                      fontWeight: FontWeight.w600,
-                      color: _kPurple),
+                    fontSize: 10,
+                    fontWeight: FontWeight.w600,
+                    color: _kPurple,
+                  ),
                 ),
               ),
             ],
@@ -1361,7 +1545,9 @@ class _CustomerProfileView extends StatelessWidget {
                   const SizedBox(height: 2),
                   Divider(
                     height: 12,
-                    color: isDark ? AppColors.borderDark : const Color(0xFFF1F5F9),
+                    color: isDark
+                        ? AppColors.borderDark
+                        : const Color(0xFFF1F5F9),
                   ),
                 ],
               ],
@@ -1377,8 +1563,9 @@ class _CustomerProfileView extends StatelessWidget {
     final primaryTextColor = isDark ? AppColors.textPrimaryDark : _kBlueDark;
     final secondaryTextColor = isDark ? AppColors.textSecondaryDark : _kGrey;
 
-    final (icon, iconBg, statusLabel, statusColor, amountColor) =
-        _statusAssets(rec.status);
+    final (icon, iconBg, statusLabel, statusColor, amountColor) = _statusAssets(
+      rec.status,
+    );
 
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 6),
@@ -1393,13 +1580,7 @@ class _CustomerProfileView extends StatelessWidget {
               color: isDark ? iconBg.withValues(alpha: 0.2) : iconBg,
               shape: BoxShape.circle,
             ),
-            child: Center(
-              child: Icon(
-                icon,
-                size: 18,
-                color: statusColor,
-              ),
-            ),
+            child: Center(child: Icon(icon, size: 18, color: statusColor)),
           ),
           const SizedBox(width: 10),
 
@@ -1408,25 +1589,37 @@ class _CustomerProfileView extends StatelessWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(rec.label,
-                    style: GoogleFonts.inter(
-                        fontSize: 13,
-                        fontWeight: FontWeight.w700,
-                        color: primaryTextColor)),
+                Text(
+                  rec.label,
+                  style: GoogleFonts.inter(
+                    fontSize: 13,
+                    fontWeight: FontWeight.w700,
+                    color: primaryTextColor,
+                  ),
+                ),
                 const SizedBox(height: 2),
                 Text(
                   '${rec.date}  •  Rec. #${rec.ref}',
                   style: GoogleFonts.inter(
-                      fontSize: 10, color: secondaryTextColor),
+                    fontSize: 10,
+                    color: secondaryTextColor,
+                  ),
                 ),
                 Row(
                   children: [
-                    Icon(Icons.payment_rounded,
-                        size: 10, color: secondaryTextColor),
+                    Icon(
+                      Icons.payment_rounded,
+                      size: 10,
+                      color: secondaryTextColor,
+                    ),
                     const SizedBox(width: 3),
-                    Text(rec.method,
-                        style: GoogleFonts.inter(
-                            fontSize: 10, color: secondaryTextColor)),
+                    Text(
+                      rec.method,
+                      style: GoogleFonts.inter(
+                        fontSize: 10,
+                        color: secondaryTextColor,
+                      ),
+                    ),
                   ],
                 ),
               ],
@@ -1440,23 +1633,26 @@ class _CustomerProfileView extends StatelessWidget {
               Text(
                 '+₹${fmt.format(rec.amount)}',
                 style: GoogleFonts.inter(
-                    fontSize: 13,
-                    fontWeight: FontWeight.w700,
-                    color: amountColor),
+                  fontSize: 13,
+                  fontWeight: FontWeight.w700,
+                  color: amountColor,
+                ),
               ),
               const SizedBox(height: 3),
               Container(
-                padding: const EdgeInsets.symmetric(
-                    horizontal: 7, vertical: 2),
+                padding: const EdgeInsets.symmetric(horizontal: 7, vertical: 2),
                 decoration: BoxDecoration(
                   color: isDark ? iconBg.withValues(alpha: 0.2) : iconBg,
                   borderRadius: BorderRadius.circular(20),
                 ),
-                child: Text(statusLabel,
-                    style: GoogleFonts.inter(
-                        fontSize: 9,
-                        fontWeight: FontWeight.w700,
-                        color: statusColor)),
+                child: Text(
+                  statusLabel,
+                  style: GoogleFonts.inter(
+                    fontSize: 9,
+                    fontWeight: FontWeight.w700,
+                    color: statusColor,
+                  ),
+                ),
               ),
             ],
           ),
@@ -1466,21 +1662,40 @@ class _CustomerProfileView extends StatelessWidget {
   }
 
   /// Returns (icon, iconBg, statusLabel, statusColor, amountColor)
-  (IconData, Color, String, Color, Color) _statusAssets(
-      _PayStatus status) {
+  (IconData, Color, String, Color, Color) _statusAssets(_PayStatus status) {
     switch (status) {
       case _PayStatus.paid:
-        return (Icons.check_circle_rounded, _kGreenLight, 'Success',
-            _kGreen, _kGreen);
+        return (
+          Icons.check_circle_rounded,
+          _kGreenLight,
+          'Success',
+          _kGreen,
+          _kGreen,
+        );
       case _PayStatus.pending:
-        return (Icons.schedule_rounded, _kAmberLight, 'Pending',
-            _kAmber, _kAmber);
+        return (
+          Icons.schedule_rounded,
+          _kAmberLight,
+          'Pending',
+          _kAmber,
+          _kAmber,
+        );
       case _PayStatus.overdue:
-        return (Icons.warning_amber_rounded, _kRedLight, 'Overdue',
-            _kRed, _kRed);
+        return (
+          Icons.warning_amber_rounded,
+          _kRedLight,
+          'Overdue',
+          _kRed,
+          _kRed,
+        );
       case _PayStatus.settled:
-        return (Icons.verified_rounded, _kPurpleLight, 'Settled',
-            _kPurple, _kPurple);
+        return (
+          Icons.verified_rounded,
+          _kPurpleLight,
+          'Settled',
+          _kPurple,
+          _kPurple,
+        );
     }
   }
 
@@ -1490,16 +1705,21 @@ class _CustomerProfileView extends StatelessWidget {
 
     return Container(
       padding: EdgeInsets.fromLTRB(
-          16, 12, 16, MediaQuery.of(context).padding.bottom + 12),
+        16,
+        12,
+        16,
+        MediaQuery.of(context).padding.bottom + 12,
+      ),
       decoration: BoxDecoration(
         color: isDark ? AppColors.cardDark : _kCardBg,
         boxShadow: isDark
             ? []
             : const [
                 BoxShadow(
-                    color: Color(0x1A000000),
-                    blurRadius: 12,
-                    offset: Offset(0, -4)),
+                  color: Color(0x1A000000),
+                  blurRadius: 12,
+                  offset: Offset(0, -4),
+                ),
               ],
       ),
       child: SizedBox(
@@ -1511,14 +1731,14 @@ class _CustomerProfileView extends StatelessWidget {
             backgroundColor: _kPurple,
             foregroundColor: Colors.white,
             shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(14)),
+              borderRadius: BorderRadius.circular(14),
+            ),
             elevation: 0,
           ),
           icon: const Icon(Icons.add_circle_rounded, size: 20),
           label: Text(
             'Add Another Purchase / EMI',
-            style: GoogleFonts.inter(
-                fontSize: 14, fontWeight: FontWeight.w700),
+            style: GoogleFonts.inter(fontSize: 14, fontWeight: FontWeight.w700),
           ),
         ),
       ),
@@ -1539,9 +1759,10 @@ class _CustomerProfileView extends StatelessWidget {
             ? []
             : [
                 BoxShadow(
-                    color: Colors.black.withValues(alpha: 0.04),
-                    blurRadius: 8,
-                    offset: const Offset(0, 2)),
+                  color: Colors.black.withValues(alpha: 0.04),
+                  blurRadius: 8,
+                  offset: const Offset(0, 2),
+                ),
               ],
       ),
       child: child,

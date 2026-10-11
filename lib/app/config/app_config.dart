@@ -15,6 +15,7 @@ class AppConfig {
   final bool enableLogging;
   final Duration requestTimeout;
   final Duration connectTimeout;
+  final Duration cacheTtl;
 
   const AppConfig({
     required this.environment,
@@ -23,6 +24,7 @@ class AppConfig {
     required this.enableLogging,
     required this.requestTimeout,
     required this.connectTimeout,
+    this.cacheTtl = const Duration(minutes: 15),
   });
 
   /// Factory constructor that reads `--dart-define=ENV=value`
@@ -44,9 +46,11 @@ class AppConfig {
 
     // Android Emulators map host's localhost to 10.0.2.2
     if (!kIsWeb && defaultTargetPlatform == TargetPlatform.android) {
-      return 'http://10.0.2.2:5000/api/v1';
+      // return 'http://10.0.2.2:5000/api/v1';
+      return 'https://emi-manager-backend-ten.vercel.app/api/v1';
     }
-    return 'http://127.0.0.1:5000/api/v1';
+    // return 'http://127.0.0.1:5000/api/v1';
+    return 'https://emi-manager-backend-ten.vercel.app/api/v1';
   }
 
   factory AppConfig._development() => AppConfig(
@@ -56,6 +60,7 @@ class AppConfig {
     enableLogging: true,
     requestTimeout: const Duration(seconds: 30),
     connectTimeout: const Duration(seconds: 15),
+    cacheTtl: const Duration(minutes: 15),
   );
 
   factory AppConfig._staging() => const AppConfig(
@@ -65,6 +70,7 @@ class AppConfig {
     enableLogging: true,
     requestTimeout: Duration(seconds: 30),
     connectTimeout: Duration(seconds: 15),
+    cacheTtl: Duration(minutes: 15),
   );
 
   factory AppConfig._production() => const AppConfig(
@@ -74,6 +80,7 @@ class AppConfig {
     enableLogging: false,
     requestTimeout: Duration(seconds: 30),
     connectTimeout: Duration(seconds: 15),
+    cacheTtl: Duration(minutes: 15),
   );
 
   bool get isDevelopment => environment == Environment.development;

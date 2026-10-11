@@ -223,7 +223,7 @@ class _CustomersViewState extends State<_CustomersView> {
 
         // Owner Profile Avatar
         GestureDetector(
-          onTap: () => context.go(RoutePaths.profile),
+          onTap: () => context.push(RoutePaths.profile),
           child: Container(
             width: 38,
             height: 38,

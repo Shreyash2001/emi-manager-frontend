@@ -6,6 +6,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:mobile_emi_manager/app/config/app_config.dart';
 import 'package:mobile_emi_manager/app/localization/locale_cubit.dart';
 import 'package:mobile_emi_manager/app/theme/theme_cubit.dart';
+import 'package:mobile_emi_manager/core/network/api_cache_manager.dart';
 import 'package:mobile_emi_manager/core/network/api_client.dart';
 import 'package:mobile_emi_manager/core/network/auth_interceptor.dart';
 import 'package:mobile_emi_manager/core/network/logging_interceptor.dart';
@@ -91,9 +92,14 @@ Future<void> initializeDependencies(AppConfig config) async {
     NetworkInfoImpl(connectivity: sl<Connectivity>()),
   );
 
-  // Auth interceptor (needs SecureStorage for token reading)
+  // Cache manager with 15-minute TTL
+  final cacheManager = ApiCacheManager(defaultTtl: config.cacheTtl);
+  sl.registerSingleton<ApiCacheManager>(cacheManager);
+
+  // Auth interceptor (needs SecureStorage for token reading and cacheManager for clearing cache on 401)
   final authInterceptor = AuthInterceptor(
     secureStorage: sl<SecureStorageService>(),
+    cacheManager: cacheManager,
   );
   sl.registerSingleton<AuthInterceptor>(authInterceptor);
 
@@ -118,7 +124,11 @@ Future<void> initializeDependencies(AppConfig config) async {
   dio.interceptors.add(authInterceptor);
 
   sl.registerSingleton<ApiClient>(
-    ApiClient(config: config, dio: dio),
+    ApiClient(
+      config: config,
+      dio: dio,
+      cacheManager: sl<ApiCacheManager>(),
+    ),
   );
 
   // ─── Data Sources ─────────────────────────────────────────────────────────
